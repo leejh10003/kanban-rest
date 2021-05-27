@@ -67,7 +67,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
   })
   const { data: { response: { id, nickname, profile_image, email, name } } } = await info.get();
   console.log(id, nickname, profile_image, email, name)
-  const user = (await db.query("SELECT * FROM user WHERE naver_id = ${id}", {
+  const user = (await db.query("SELECT * FROM public.user WHERE naver_id = ${id}", {
     id
   }))
   if (user?.length > 0){
