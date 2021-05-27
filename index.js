@@ -89,7 +89,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
       algorithm: 'RS256',
       expiresIn: "1h"
     });
-    await db.query("UPDATE public.user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
+    await db.query("UPDATE public.user SET refresh_token = ${refreshToken} WHERE id = ${userId}", {
       refreshToken,
       userId
     })
@@ -130,7 +130,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 				algorithm: 'RS256',
 				expiresIn: "1h"
 			});
-			await t.query("UPDATE public.user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
+			await t.query("UPDATE public.user SET refresh_token = ${refreshToken} WHERE id = ${userId}", {
 				refreshToken,
 				userId
 			})
