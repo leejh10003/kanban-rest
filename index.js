@@ -104,7 +104,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
       newUser: false
     };
   } else {
-		await db.tx((t) => {
+		await db.tx(async (t) => {
 			const newUser = await t.one("INSERT INTO public.user(thumbnail, naver_id, nickname, email, name) VALUES (${profile_image}, ${id}, ${nickname}, ${email}, ${name}) RETURNING id", {
 				id,
 				nickname,
