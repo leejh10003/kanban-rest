@@ -105,14 +105,14 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
     };
   } else {
 		await db.tx((t) => {
-			const newUser = (await t.tx("INSERT INTO public.user(thumbnail, naver_id, nickname, email, name) VALUES (${profile_image}, ${id}, ${nickname}, ${email}, ${name}) RETURNING id", {
+			const newUser = await t.one("INSERT INTO public.user(thumbnail, naver_id, nickname, email, name) VALUES (${profile_image}, ${id}, ${nickname}, ${email}, ${name}) RETURNING id", {
 				id,
 				nickname,
 				profile_image,
 				email,
 				name
-			}))[0];
-			const uerId = newUser?.[0]?.id
+			});
+			const uerId = newUser?.id
 			const payload = {
 				"https://hasura.io/jwt/claims": {
 					"x-hasura-allowed-roles": ["user"],
