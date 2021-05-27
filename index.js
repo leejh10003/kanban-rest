@@ -157,4 +157,4 @@ app.use(router.routes())
 	.use(cors({
 		credentials: true,
 		exposeHeaders: ['Access-Control-Allow-Credentials', 'Access-Control-Allow-Headers', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Origin', 'Set-Cookie', 'X-Forwarded-Proto']
-	})).listen(process.env.PORT, () => console.log('Running on port 3000'));
+	})).listen(process.env.PORT, () => console.log(`Running on port ${process.env.PORT}`));
