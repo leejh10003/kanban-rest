@@ -71,16 +71,16 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
     id
   }))
   if (user?.length > 0){
-    const uerId = user?.[0]?.id
+    const userId = user?.[0]?.id
     const payload = {
       "https://hasura.io/jwt/claims": {
         "x-hasura-allowed-roles": ["user"],
         "x-hasura-default-role": "user",
-        "x-hasura-dib-user-id": uerId.toString(),
+        "x-hasura-dib-user-id": userId.toString(),
       },
     }
     const refresh = {
-      id: uerId,
+      id: userId,
     }
     const refreshToken = jwt.sign(refresh, privateKey, {
       algorithm: 'RS256'
@@ -112,16 +112,16 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 				email,
 				name
 			});
-			const uerId = newUser?.id
+			const userId = newUser?.id
 			const payload = {
 				"https://hasura.io/jwt/claims": {
 					"x-hasura-allowed-roles": ["user"],
 					"x-hasura-default-role": "user",
-					"x-hasura-dib-user-id": uerId.toString(),
+					"x-hasura-dib-user-id": userId.toString(),
 				},
 			}
 			const refresh = {
-				id: uerId,
+				id: userId,
 			}
 			const refreshToken = jwt.sign(refresh, privateKey, {
 				algorithm: 'RS256'
@@ -130,7 +130,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 				algorithm: 'RS256',
 				expiresIn: "1h"
 			});
-			await db.query("UPDATE public.user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
+			await t.query("UPDATE public.user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
 				refreshToken,
 				userId
 			})
