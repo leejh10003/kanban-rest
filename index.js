@@ -89,7 +89,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
       algorithm: 'RS256',
       expiresIn: "1h"
     });
-    await db.query("UPDATE user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
+    await db.query("UPDATE public.user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
       refreshToken,
       userId
     })
@@ -103,7 +103,49 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
       token: accessToken,
       newUser: false
     };
-  }
+  } else {
+		await db.tx((t) => {
+			const user = (await t.tx("INSERT INTO public.user(thumbnail, naver_id, nickname, email, name) VALUES (${profile_image}, ${id}, ${nickname}, ${email}, ${name}) RETURNING id", {
+				id,
+				nickname,
+				profile_image,
+				email,
+				name
+			}))[0];
+			const uerId = user?.[0]?.id
+			const payload = {
+				"https://hasura.io/jwt/claims": {
+					"x-hasura-allowed-roles": ["user"],
+					"x-hasura-default-role": "user",
+					"x-hasura-dib-user-id": uerId.toString(),
+				},
+			}
+			const refresh = {
+				id: uerId,
+			}
+			const refreshToken = jwt.sign(refresh, privateKey, {
+				algorithm: 'RS256'
+			});
+			const accessToken = jwt.sign(payload, privateKey, {
+				algorithm: 'RS256',
+				expiresIn: "1h"
+			});
+			await db.query("UPDATE public.user SET refreshToken = ${refreshToken} WHERE id = ${userId}", {
+				refreshToken,
+				userId
+			})
+			ctx.cookies.set('refreshToken', null, {
+				httpOnly: true,
+				secure: true,
+				domain: 'ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com',
+				expires: new Date(1000 * 60 * 60 * 9 + Date.now())
+			});
+			ctx.response.body = {
+				token: accessToken,
+				newUser: true
+			};
+		});
+	}
 });
 router.options('refreshPreflight', '/refresh', async (ctx) => {
 	console.log(ctx.request.header);
