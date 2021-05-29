@@ -180,7 +180,8 @@ router.post('refresh', '/refresh', async (ctx) => {
 				expiresIn: "1h"
 			})
 		});
-	} catch {
+	} catch (e) {
+		console.error(e)
 		ctx.response.body = JSON.stringify({
 			'success': false
 		});
