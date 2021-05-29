@@ -134,7 +134,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 				refreshToken,
 				userId
 			})
-			ctx.cookies.set('refreshToken', null, {
+			ctx.cookies.set('refreshToken', refreshToken, {
 				httpOnly: true,
 				secure: true,
 				domain: 'ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com',
