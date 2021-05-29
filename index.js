@@ -31,6 +31,7 @@ var pgp = require('pg-promise')({
 var connectionString = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_DATABASE}`;
 var db = pgp(connectionString);
 function domainCheck(origin){
+	console.log(origin)
 	if (['http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com', 'https://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com', 'http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com/', 'https://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com/']){
 		return origin;
 	} else {
