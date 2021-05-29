@@ -138,7 +138,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 			ctx.cookies.set('refreshToken', refreshToken, {
 				httpOnly: true,
 				secure: true,
-				domain: 'ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com',
+				domain: 'trello.jeontuk-11.link',
 				expires: new Date(1000 * 60 * 60 * 9 + Date.now())
 			});
 			ctx.response.body = {
@@ -157,35 +157,29 @@ router.options('refreshPreflight', '/refresh', async (ctx) => {
 })
 router.post('refresh', '/refresh', async (ctx) => {
 	const refreshToken = ctx.cookies.get('refreshToken');
-	const { kind, adminId, partnerId, iat } = jwt.verify(refreshToken, publicKey, {
+	const { id, iat } = jwt.verify(refreshToken, publicKey, {
 		algorithms: ["RS256"]
 	});
-	console.log(kind, adminId, partnerId, iat)
+	console.log(id, iat)
 	try {
-		const inDbRefreshToken = (await db.query(`SELECT refresh_token FROM admin WHERE id = ${adminId} AND product_partner_id = ${partnerId} AND enabled = true`))[0].refresh_token;
-		if (inDbRefreshToken === refreshToken) {
-			console.log("available crm refresh token: ", inDbRefreshToken, refreshToken);
-			const token = {
-				"https://hasura.io/jwt/claims": {
-					"x-hasura-allowed-roles": kind,
-					"x-hasura-default-role": kind[0],
-					"x-hasura-admin-id": adminId.toString(),
-					"x-hasura-partner-id": partnerId
-				},
-			}
-			ctx.response.body = JSON.stringify({
-				'success': true,
-				'token': jwt.sign(token, privateKey, {
-					algorithm: 'RS256',
-					expiresIn: "2m"
-				})
-			});
-		} else {
-			ctx.response.body = JSON.stringify({
-				'success': false
-			});
-			ctx.response.status = 500;
+		const user = await db.one("SELECT * FROM user WHERE id = ${id} AND refresh_token = ${refreshToken}", {
+			id, refreshToken
+		});
+		console.log(user)
+		const payload = {
+			"https://hasura.io/jwt/claims": {
+				"x-hasura-allowed-roles": ["user"],
+				"x-hasura-default-role": "user",
+				"x-hasura-dib-user-id": id.toString(),
+			},
 		}
+		ctx.response.body = JSON.stringify({
+			'success': true,
+			'token': jwt.sign(payload, privateKey, {
+				algorithm: 'RS256',
+				expiresIn: "1h"
+			})
+		});
 	} catch {
 		ctx.response.body = JSON.stringify({
 			'success': false
