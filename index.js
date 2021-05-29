@@ -32,7 +32,7 @@ var connectionString = `postgres://${process.env.DB_USER}:${process.env.DB_PASSW
 var db = pgp(connectionString);
 function domainCheck(origin){
 	console.log(origin)
-	if (['http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com', 'https://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com', 'http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com/', 'https://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com/']){
+	if (['http://trello.jeontuk-11.link', 'https://trello.jeontuk-11.link', 'http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com', 'https://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com', 'http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com/', 'https://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com/']){
 		return origin;
 	} else {
 		throw new Error(`Origin not match: ${origin}`);
@@ -97,7 +97,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
     ctx.cookies.set('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      domain: 'ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com',
+      domain: 'trello.jeontuk-11.link',
       expires: new Date(1000 * 60 * 60 * 9 + Date.now())
     });
     ctx.response.body = {
