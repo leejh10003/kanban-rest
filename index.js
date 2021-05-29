@@ -162,7 +162,7 @@ router.post('refresh', '/refresh', async (ctx) => {
 	});
 	console.log(id, iat)
 	try {
-		const user = await db.one("SELECT * FROM user WHERE id = ${id} AND refresh_token = ${refreshToken}", {
+		const user = await db.one("SELECT * FROM public.user WHERE id = ${id} AND refresh_token = ${refreshToken}", {
 			id, refreshToken
 		});
 		console.log(user)
