@@ -77,7 +77,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
       "https://hasura.io/jwt/claims": {
         "x-hasura-allowed-roles": ["user"],
         "x-hasura-default-role": "user",
-        "x-hasura-dib-user-id": userId.toString(),
+        "x-hasura-user-id": userId.toString(),
       },
     }
     const refresh = {
@@ -118,7 +118,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 				"https://hasura.io/jwt/claims": {
 					"x-hasura-allowed-roles": ["user"],
 					"x-hasura-default-role": "user",
-					"x-hasura-dib-user-id": userId.toString(),
+					"x-hasura-user-id": userId.toString(),
 				},
 			}
 			const refresh = {
@@ -170,7 +170,7 @@ router.post('refresh', '/refresh', async (ctx) => {
 			"https://hasura.io/jwt/claims": {
 				"x-hasura-allowed-roles": ["user"],
 				"x-hasura-default-role": "user",
-				"x-hasura-dib-user-id": id.toString(),
+				"x-hasura-user-id": id.toString(),
 			},
 		}
 		ctx.response.body = JSON.stringify({
