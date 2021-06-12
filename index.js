@@ -74,6 +74,9 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
   if (user?.length > 0){
     const userId = user?.[0]?.id
     const payload = {
+			thumbnail: profile_image,
+			name,
+			email,
       "https://hasura.io/jwt/claims": {
         "x-hasura-allowed-roles": ["user"],
         "x-hasura-default-role": "user",
@@ -115,6 +118,9 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 			});
 			const userId = newUser?.id
 			const payload = {
+				thumbnail: profile_image,
+				name,
+				email,
 				"https://hasura.io/jwt/claims": {
 					"x-hasura-allowed-roles": ["user"],
 					"x-hasura-default-role": "user",
@@ -167,6 +173,9 @@ router.post('refresh', '/refresh', async (ctx) => {
 		});
 		console.log(user)
 		const payload = {
+			thumbnail: user.thumbnail,
+			name: user.name,
+			email: user.email,
 			"https://hasura.io/jwt/claims": {
 				"x-hasura-allowed-roles": ["user"],
 				"x-hasura-default-role": "user",
