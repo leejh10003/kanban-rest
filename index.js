@@ -183,7 +183,6 @@ router.post('image', '/image', upload.fields([{
 		console.log(ctx.request.files)
 		if (!!(ctx.request.files) && (ctx.request.files.file.length > 0)){
 			const uploads = ctx.request.files.file.map((file) => new Promise(async () => {
-				console.log(file)
 				const fileFromBUffer = await FileType.fromBuffer(file.buffer);
 				const result = await s3.upload({
 					Bucket: S3_BUCKET_NAME,
@@ -191,11 +190,11 @@ router.post('image', '/image', upload.fields([{
 					Body: file.buffer,
 					Key: `/${userId}/${Date.now()}.${fileFromBUffer.ext}`
 				}).promise()
-				console.log(result)
 				return result;
 			}));
 			console.log(uploads)
 			const uploadResults = await Promise.all(uploads);
+			console.log(uploadResults)
 			ctx.response.body = JSON.stringify(uploadResults);
 			ctx.response.status = 200;
 		} else {
