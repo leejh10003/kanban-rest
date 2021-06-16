@@ -54,7 +54,7 @@ const router = new KoaRouter();
 app.use(BodyParser());
 router.options('naverSigninPreflight', '/login/naver', async (ctx) => {
 	console.log(ctx.request.header);
-	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Authorization');
 	ctx.set('Access-Control-Allow-Credentials', true);
 	ctx.response.status = 200;
@@ -165,8 +165,8 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 	}
 });
 router.options('imagePreflight', '/image', async (ctx) => {
-	console.log(ctx.request.header, domainCheck(ctx.request.header.referer || ctx.request.header.origin));
-	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	console.log(ctx.request.header, domainCheck(ctx.request.header.origin));
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Authorization');
 	ctx.set('Access-Control-Allow-Credentials', true);
 	ctx.response.status = 200;
@@ -210,12 +210,12 @@ router.post('image', '/image', upload.fields([{
 		});
 		ctx.response.status = 500;
 	}
-	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Credentials', 'true');
 });
 router.options('refreshPreflight', '/refresh', async (ctx) => {
 	console.log(ctx.request.header);
-	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Authorization');
 	ctx.set('Access-Control-Allow-Credentials', true);
 	ctx.response.status = 200;
@@ -255,7 +255,7 @@ router.post('refresh', '/refresh', async (ctx) => {
 		});
 		ctx.response.status = 500;
 	}
-	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Credentials', 'true');
 });
 app.use(router.routes())
