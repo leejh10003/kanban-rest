@@ -165,7 +165,7 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 	}
 });
 router.options('imagePreflight', '/image', async (ctx) => {
-	console.log(ctx.request.header);
+	console.log(ctx.request.header, domainCheck(ctx.request.header.referer || ctx.request.header.origin));
 	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Authorization');
 	ctx.set('Access-Control-Allow-Credentials', true);
