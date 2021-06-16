@@ -182,14 +182,14 @@ router.post('image', '/image', upload.fields([{
 	try {
 		console.log(ctx.request.files)
 		if (!!(ctx.request.files) && (ctx.request.files.file.length > 0)){
-			const uploads = ctx.request.files.file.map((file) => (async () => {
+			const uploads = ctx.request.files.file.map((file) => Promise(async () => {
 				console.log(file)
 				const fileFromBUffer = await FileType.fromBuffer(file.buffer);
 				const result = await s3.upload({
 					Bucket: S3_BUCKET_NAME,
 					ACL: 'public-read',
 					Body: file.buffer,
-					Key: `profile/${userId}/${Date.now()}.${fileFromBUffer.ext}`
+					Key: `/${userId}/${Date.now()}.${fileFromBUffer.ext}`
 				}).promise()
 				console.log(result)
 				return result;
