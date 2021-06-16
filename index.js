@@ -8,7 +8,7 @@ const BodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const axios = require('axios');
 require('dotenv').config()
-const { CLIENT_ID, CLIENT_SECRET, ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env;
+const { CLIENT_ID, CLIENT_SECRET, ACCESS_KEY_ID, SECRET_ACCESS_KEY, S3_BUCKET_NAME } = process.env;
 const urlencode = require('urlencode');
 const upload = multer({
     storage: multer.memoryStorage()
@@ -181,7 +181,7 @@ router.post('image', '/image', async (ctx) => {
 			const uploads = ctx.request.files.file.map((file) => (async () => {
 				const fileFromBUffer = await FileType.fromBuffer(file.buffer);
 				return await s3.upload({
-					Bucket: process.env.S3_BUCKET_NAME,
+					Bucket: S3_BUCKET_NAME,
 					ACL: 'public-read',
 					Body: file.buffer,
 					Key: `profile/${userId}/${Date.now()}.${fileFromBUffer.ext}`
