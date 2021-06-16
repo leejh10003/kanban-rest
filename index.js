@@ -8,8 +8,17 @@ const BodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const axios = require('axios');
 require('dotenv').config()
-const { CLIENT_ID, CLIENT_SECRET } = process.env;
+const { CLIENT_ID, CLIENT_SECRET, ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env;
 const urlencode = require('urlencode');
+const upload = multer({
+    storage: multer.memoryStorage()
+});
+const AWS = require("aws-sdk");
+const FileType = require('file-type');
+const s3 = new AWS.S3({
+    accessKeyId: ACCESS_KEY_ID,
+    secretAccessKey: SECRET_ACCESS_KEY
+});
 var pgp = require('pg-promise')({
 	error(err, e) {
 		if (e.cn) {
@@ -153,6 +162,46 @@ router.post('naverSignin', '/login/naver', async (ctx) => {
 			};
 		});
 	}
+});
+router.options('imagePreflight', '/image', async (ctx) => {
+	console.log(ctx.request.header);
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Authorization');
+	ctx.set('Access-Control-Allow-Credentials', true);
+	ctx.response.status = 200;
+})
+router.post('image', '/image', async (ctx) => {
+	const { authorization } = ctx.request.headers;
+	const tokenPayload = jwt.verify(authorization.substring(7), publicKey, {
+		algorithms: ["RS256"]
+	})['https://hasura.io/jwt/claims'];
+	const userId = parseInt(tokenPayload['x-hasura-dib-user-id']);
+	try {
+		if (!!(ctx.request.files) && (ctx.request.files.file.length > 0)){
+			const uploads = ctx.request.files.file.map((file) => (async () => {
+				const fileFromBUffer = await FileType.fromBuffer(file.buffer);
+				return await s3.upload({
+					Bucket: process.env.S3_BUCKET_NAME,
+					ACL: 'public-read',
+					Body: file.buffer,
+					Key: `profile/${userId}/${Date.now()}.${fileFromBUffer.ext}`
+				}).promise()
+			}));
+			const uploadResults = await Promise.all(uploads);
+			ctx.response.body = JSON.stringify(uploadResults);
+			ctx.response.status = 200;
+		} else {
+			throw new Error();
+		}
+	} catch (e) {
+		console.error(e)
+		ctx.response.body = JSON.stringify({
+			'success': false
+		});
+		ctx.response.status = 500;
+	}
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.referer || ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Credentials', 'true');
 });
 router.options('refreshPreflight', '/refresh', async (ctx) => {
 	console.log(ctx.request.header);
