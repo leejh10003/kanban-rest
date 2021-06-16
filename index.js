@@ -194,6 +194,7 @@ router.post('image', '/image', upload.fields([{
 				console.log(result)
 				return result;
 			}));
+			console.log(uploads)
 			const uploadResults = await Promise.all(uploads);
 			ctx.response.body = JSON.stringify(uploadResults);
 			ctx.response.status = 200;
