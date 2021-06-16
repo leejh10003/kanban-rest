@@ -10,6 +10,7 @@ const axios = require('axios');
 require('dotenv').config()
 const { CLIENT_ID, CLIENT_SECRET, ACCESS_KEY_ID, SECRET_ACCESS_KEY, S3_BUCKET_NAME } = process.env;
 const urlencode = require('urlencode');
+const multer = require("@koa/multer");
 const upload = multer({
     storage: multer.memoryStorage()
 });
@@ -170,7 +171,9 @@ router.options('imagePreflight', '/image', async (ctx) => {
 	ctx.set('Access-Control-Allow-Credentials', true);
 	ctx.response.status = 200;
 })
-router.post('image', '/image', async (ctx) => {
+router.post('image', '/image', upload.fields([{
+	name: 'file'
+}]), async (ctx) => {
 	const { authorization } = ctx.request.headers;
 	const tokenPayload = jwt.verify(authorization.substring(7), publicKey, {
 		algorithms: ["RS256"]
