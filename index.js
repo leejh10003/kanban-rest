@@ -249,12 +249,6 @@ router.post('refresh', '/refresh', async (ctx) => {
 				expiresIn: "1h"
 			})
 		});
-    ctx.cookies.set('refreshToken', null, {
-      httpOnly: true,
-      secure: true,
-      domain: 'trello.jeontuk-11.link',
-      expires: new Date(1000 * 60 * 60 * 9 + Date.now())
-    });
 	} catch (e) {
 		console.error(e)
 		ctx.response.body = JSON.stringify({
@@ -291,6 +285,12 @@ router.post('logout', '/logout', async (ctx) => {
 		};
 		ctx.response.status = 500;
 	}
+	ctx.cookies.set('refreshToken', null, {
+		httpOnly: true,
+		secure: true,
+		domain: 'trello.jeontuk-11.link',
+		expires: new Date(1000 * 60 * 60 * 9 + Date.now())
+	});
 	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
 	ctx.set('Access-Control-Allow-Credentials', 'true');
 });
