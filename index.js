@@ -189,7 +189,7 @@ router.post('image', '/image', upload.fields([{
 						Bucket: S3_BUCKET_NAME,
 						ACL: 'public-read',
 						Body: file.buffer,
-						Key: `/${userId}/${Date.now()}.${fileFromBUffer.ext}`
+						Key: `${userId}/${Date.now()}.${fileFromBUffer.ext}`
 					}).promise()
 					resolve(result)
 				});
