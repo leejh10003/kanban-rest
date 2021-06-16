@@ -174,6 +174,7 @@ router.options('imagePreflight', '/image', async (ctx) => {
 router.post('image', '/image', upload.fields([{
 	name: 'file'
 }]), async (ctx) => {
+	console.log('image called')
 	const { authorization } = ctx.request.headers;
 	const tokenPayload = jwt.verify(authorization.substring(7), publicKey, {
 		algorithms: ["RS256"]
