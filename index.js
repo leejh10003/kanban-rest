@@ -206,7 +206,8 @@ router.post('image', '/image', upload.fields([{
 	} catch (e) {
 		console.error(e)
 		ctx.response.body = JSON.stringify({
-			'success': false
+			'success': false,
+			'reason': e?.message
 		});
 		ctx.response.status = 500;
 	}
