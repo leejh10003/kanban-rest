@@ -180,6 +180,7 @@ router.post('image', '/image', upload.fields([{
 	})['https://hasura.io/jwt/claims'];
 	const userId = parseInt(tokenPayload['x-hasura-dib-user-id']);
 	try {
+		console.log(ctx.request.files)
 		if (!!(ctx.request.files) && (ctx.request.files.file.length > 0)){
 			const uploads = ctx.request.files.file.map((file) => (async () => {
 				console.log(file)
