@@ -249,11 +249,46 @@ router.post('refresh', '/refresh', async (ctx) => {
 				expiresIn: "1h"
 			})
 		});
+    ctx.cookies.set('refreshToken', null, {
+      httpOnly: true,
+      secure: true,
+      domain: 'trello.jeontuk-11.link',
+      expires: new Date(1000 * 60 * 60 * 9 + Date.now())
+    });
 	} catch (e) {
 		console.error(e)
 		ctx.response.body = JSON.stringify({
 			'success': false
 		});
+		ctx.response.status = 500;
+	}
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Credentials', 'true');
+});
+router.options('logoutPreflight', '/logout', async (ctx) => {
+	console.log(ctx.request.header, domainCheck(ctx.request.header.origin));
+	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
+	ctx.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Authorization');
+	ctx.set('Access-Control-Allow-Credentials', true);
+	ctx.response.status = 200;
+})
+router.post('logout', '/logout', async (ctx) => {
+	const refreshToken = ctx.cookies.get('refreshToken');
+	const { id } = jwt.verify(refreshToken, publicKey, {
+		algorithms: ["RS256"]
+	});
+	try {
+		await db.query("UPDATE public.user SET refresh_token = NULL WHERE id = ${id}", {
+			id
+		});
+		ctx.response.body = {
+			'success': true
+		}
+	} catch (e) {
+		console.error(e)
+		ctx.response.body = {
+			'success': false
+		};
 		ctx.response.status = 500;
 	}
 	ctx.set('Access-Control-Allow-Origin', `${domainCheck(ctx.request.header.origin)}`);
